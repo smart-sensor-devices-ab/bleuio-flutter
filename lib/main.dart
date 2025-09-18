@@ -256,7 +256,7 @@ class _StatusPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: fg.withOpacity(.2)),
       ),
-      child: Text('Status: $status', style: TextStyle(color: fg, fontWeight: FontWeight.w600)),
+      child: Text('Status : $status', style: TextStyle(color: fg, fontWeight: FontWeight.w600)),
     );
   }
 }
