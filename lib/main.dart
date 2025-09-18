@@ -5,6 +5,7 @@ import 'dart:js_util' as jsu;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const BleuIOApp());
@@ -167,6 +168,8 @@ class _BleuIOSerialWebDemoState extends State<BleuIOSerialWebDemo> {
                         labelText: 'Custom AT command',
                       ),
                       style: mono,
+                      textCapitalization: TextCapitalization.characters,
+                      inputFormatters: [UpperCaseTextFormatter()],
                       onSubmitted: (v) => _send(v.trim()),
                     ),
                   ),
@@ -174,6 +177,11 @@ class _BleuIOSerialWebDemoState extends State<BleuIOSerialWebDemo> {
                   ElevatedButton(
                     onPressed: () => _send(_cmdCtrl.text.trim()),
                     child: const Text('Send'),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () { _svc.sendCtrlC(); },
+                    child: const Text('Stop process'),
                   ),
                 ]),
               ],
@@ -280,6 +288,13 @@ class _WebSerialBleuIO {
     final writable = jsu.getProperty(_port, 'writable');
     _writer = jsu.callMethod(writable, 'getWriter', []);
   }
+  Future<void> sendCtrlC() async {
+    if (!_connected || _writer == null) return;
+    // ETX (Ctrl+C) without CRLF
+    await _writeRaw(Uint8List.fromList([0x03]));
+    _lineCtl.add('>> [CTRL+C]');
+    await Future.delayed(const Duration(milliseconds: 20));
+  }
 
   Future<void> writeLine(String cmd) async {
     if (!_connected || _writer == null) return;
@@ -348,3 +363,17 @@ class _WebSerialBleuIO {
     await _lineCtl.close();
   }
 }
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return newValue.copyWith(
+      text: newValue.text.toUpperCase(),
+      selection: newValue.selection,
+      composing: TextRange.empty,
+    );
+  }
+}
+
