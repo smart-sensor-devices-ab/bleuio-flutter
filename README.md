@@ -1,6 +1,6 @@
-# bleuio_demo
+# BleuIO
 
-A new Flutter project.
+BleuIO AT command explorer.
 
 ## Getting Started
 
