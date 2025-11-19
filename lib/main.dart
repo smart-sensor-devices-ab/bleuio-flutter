@@ -161,7 +161,7 @@ class _BleuIOSerialWebDemoState extends State<BleuIOSerialWebDemo> {
                 // Custom command
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   SizedBox(
-                    width: 300,
+                    width: 600,
                     child: TextField(
                       controller: _cmdCtrl,
                       decoration: const InputDecoration(
